@@ -41,6 +41,7 @@ let config = {
 let o;
 let timedEvent;
 let tetriminoSpeed;
+let cursors;
 let game = new Phaser.Game(config);
 
 function preload() {
@@ -80,7 +81,15 @@ function create() {
 }
 
 function update() {
+    // Display debug text
     tetriminoSpeed.setText('Y velocity: ' + o.body.velocity.y);
+
+    // Control tetrimino movement
+    if (cursors.left.isDown) {
+        o.x -= 5;
+    } else if (cursors.right.isDown) {
+        o.x += 5;
+    }
 }
 
 function dropTetrimino(piece) {
