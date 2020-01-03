@@ -25,7 +25,7 @@ let config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            debug: false
+            debug: true
         }
     },
     scene: {
@@ -38,267 +38,47 @@ let config = {
     }
 };
 
-const DELAY = 2000;
-const PADDLEWIDTH = 60;
-
-let ballSpeedY = 300;
-let ballSpeedX = 200;
-let p1Score = 0;
-let playerLives = 5;
-let hitCounter = 0;
-let orangeHitToggle = false;
-let redHitToggle = false;
-let balls;
-let cursors;
-let playerOne;
-let ball;
-let playerOneScore;
-let winningText;
-let walls;
-let playerLivesText;
-let blueBar;
-let bars;
-let greenBar;
-let yellowBar;
-let orangeBar;
-let brownBar;
-let redBar;
-
+let o;
+let timedEvent;
 let game = new Phaser.Game(config);
 
-function preload()
-{
+function preload() {
     // Load assets
     this.load.image('background', 'assets/test-background.png');
     this.load.image('separator', 'assets/bar-separator.png');
-    // this.load.audio('blip-paddle', 'assets/blip-paddle.wav', {instances: 1});
-    // this.load.audio('blip-wall', 'assets/blip-wall.wav', {instances: 1});
-    // this.load.audio('blip-score', 'assets/blip-score.wav', {instances: 1});
+    this.load.image('o_piece', 'assets/o_piece.png');
 }
 
-function create()
-{
+function create() {
     // Background image
     this.add.image(450, 300, 'background');
     this.add.image(300, 300, 'separator');
     this.add.image(600, 300, 'separator');
 
-    // Create vertical walls
-    // walls = this.physics.add.staticGroup();
-    // walls.create(25,  400, 'vertical-wall');
-    // walls.create(775, 400, 'vertical-wall');
-    // walls.create(400, 100, 'horizontal-wall');
-
-    // Create bars
-    // blueBar   = this.physics.add.staticGroup();
-    // greenBar  = this.physics.add.staticGroup();
-    // yellowBar = this.physics.add.staticGroup();
-    // orangeBar = this.physics.add.staticGroup();
-    // brownBar  = this.physics.add.staticGroup();
-    // redBar    = this.physics.add.staticGroup();
-    // createBars();
-
-    // Create paddle
-    // playerOne = this.physics.add.image(400, 575, 'paddle');
-    // playerOne.setCollideWorldBounds(true);
-    // playerOne.setImmovable(true);
-
-    // Create ball
-    // balls = this.physics.add.group();
-    // ball = balls.create(700, 330, 'ball');
-    // ball.setBounce(1);
-    // ball.setTint(0xc84848);
-    // ball.setCollideWorldBounds(true);
-    // ball.setVelocity(-ballSpeedX, ballSpeedY);
-    // ball.allowGravity = false;
+    // Tetriminos
+    o = this.physics.add.image(450, 300, 'o_piece');
+    o.setCollideWorldBounds(true);
 
     // Keyboard inputs
     cursors = this.input.keyboard.createCursorKeys();
 
-    // Create sounds
-    // this.sound.add('blip-paddle');
-    // this.sound.add('blip-wall');
-    // this.sound.add('blip-score');
+    // Dropping piece using timedEvents
+    timedEvent = this.time.addEvent({
+        delay: 1000,
+        callback: dropTetrimino,
+        args: [o],
+        callbackScope: this,
+        loop: true
+    });
 
-    // Create score view
-    // playerOneScore = this.add.text(200, 17, '000', {
-    //     fontSize: '64px',
-    //     fill: '#8e8e8e',
-    //     fontFamily: 'Electrolize'
-    // });
-
-    // playerLivesText = this.add.text(550, 17, '5', {
-    //     fontSize: '64px',
-    //     fill: '#8e8e8e',
-    //     fontFamily: 'Electrolize'
-    // });
-
-    // Create collision detection
-    // this.physics.add.collider(playerOne, walls);
-    // this.physics.add.collider(balls, walls);
-    // this.physics.add.collider(ball, blueBar, barCollideBlueOrGreen, null, this);
-    // this.physics.add.collider(ball, greenBar, barCollideBlueOrGreen, null, this);
-    // this.physics.add.collider(ball, yellowBar, barCollideYellow, null, this);
-    // this.physics.add.collider(ball, orangeBar, barCollideOrange, null, this);
-    // this.physics.add.collider(ball, brownBar, barCollideBrown, null, this);
-    // this.physics.add.collider(ball, redBar, barCollideRed, null, this);
-    // this.physics.add.collider(ball, playerOne, hitplayerOne, null, this);
-    // this.physics.add.overlap(playerOne, walls, wallOverlap, null, this);
 }
 
-function update()
-{
-    // Conditions to lose life
-    // if (ball.body.position.y === 590) {
-    //     this.sound.play('blip-score');
-    //     hitCounter = 0;
-    //     orangeHitToggle = false;
-    //     redHitToggle = false;
-    //     ball.x = 700;
-    //     ball.y = 330;
-    //     ball.setTint(0x000000);
-    //     ball.setVelocity(0, 0);
-    //     playerLivesText.setText('' + (--playerLives));
-    //     if (playerLives === 0) {
-    //         return;
-    //     }
-    //     setTimeout(() => { // The ball will be served after a brief DELAY
-    //         ball.setTint(0xc84848);
-    //         ball.x = 700;
-    //         ball.y = 330;
-    //         ballSpeedY = 300;
-    //         ballSpeedX = 200;
-    //         ball.setVelocity(-ballSpeedX, ballSpeedY);
-    //     }, DELAY);
-    // }
-
-    // Human player input controls
-    // if (cursors.left.isDown) {
-    //     playerOne.setVelocityX(-600);
-    // } else if (cursors.right.isDown) {
-    //     playerOne.setVelocityX(600);
-    // } else {
-    //     playerOne.setVelocityX(0);
-    // }
+function update() {
 }
 
-// function barCollideBlueOrGreen(ball, bar) {
-//     this.sound.play('blip-wall');
-//     bar.destroy();
-//     playerOneScore.setText(('000' + (++p1Score)).substr(-3));
-// }
-
-// function barCollideYellow(ball, bar) {
-//     this.sound.play('blip-wall');
-//     bar.destroy();
-//     p1Score += 4
-//     playerOneScore.setText(('000' + (p1Score)).substr(-3));
-// }
-
-// function barCollideOrange(ball, bar) {
-//     this.sound.play('blip-wall');
-//     p1Score += 4
-//     playerOneScore.setText(('000' + (p1Score)).substr(-3));
-//     if (!orangeHitToggle && ball.body.velocity.y > 0) {
-//         orangeHitToggle = true;
-//         ballSpeedX *= 1.2;
-//         ballSpeedY *= 1.2;
-//         ball.body.setVelocityX(-ballSpeedX);
-//         ball.body.setVelocityY(ballSpeedY);
-//     } else if (!orangeHitToggle && ball.body.velocity.y < 0) {
-//         orangeHitToggle = true;
-//         ballSpeedX *= 1.2;
-//         ballSpeedY *= 1.2;
-//         ball.body.setVelocityX(-ballSpeedX);
-//         ball.body.setVelocityY(-ballSpeedY);
-//     }
-//     bar.destroy();
-// }
-
-// function barCollideBrown(ball, bar) {
-//     this.sound.play('blip-wall');
-//     bar.destroy();
-//     p1Score += 7
-//     playerOneScore.setText(('000' + (p1Score)).substr(-3));
-// }
-
-// function barCollideRed(ball, bar) {
-//     this.sound.play('blip-wall');
-//     p1Score += 7
-//     playerOneScore.setText(('000' + (p1Score)).substr(-3));
-//     if (!redHitToggle && ball.body.velocity.y > 0) {
-//         redHitToggle = true;
-//         ballSpeedX *= 1.2;
-//         ballSpeedY *= 1.2;
-//         ball.body.setVelocityX(-ballSpeedX);
-//         ball.body.setVelocityY(ballSpeedY);
-//     } else if (!redHitToggle && ball.body.velocity.y < 0) {
-//         redHitToggle = true;
-//         ballSpeedX *= 1.2;
-//         ballSpeedY *= 1.2;
-//         ball.body.setVelocityX(-ballSpeedX);
-//         ball.body.setVelocityY(-ballSpeedY);
-//     }
-//     bar.destroy();
-// }
-
-// function wallOverlap(playerOne, walls) {
-//     if (playerOne.body.position.x < 400) {
-//         playerOne.body.position.x = 50;
-//     } else {
-//         playerOne.body.position.x = 690;
-//     }
-// }
-
-// function hitplayerOne(ball, playerOne) {
-//     this.sound.play('blip-paddle');
-
-//     hitCounter++;
-//     if (hitCounter === 8) {
-//         ballSpeedX *= 1.5;
-//         ball.body.setVelocityX(ballSpeedX);
-//     } else if (hitCounter === 12) {
-//         ballSpeedX *= 1.5;
-//         ball.body.setVelocityX(ballSpeedX);
-//     }
-
-//     let paddle1X = playerOne.body.position.x;
-//     let intersectX = ball.body.position.x;
-
-//     let relativeIntersectX = (paddle1X+(PADDLEWIDTH/2)) - intersectX;
-//     let normalizedRelativeIntersectionX = (relativeIntersectX/(PADDLEWIDTH/2));
-
-
-//     if (normalizedRelativeIntersectionX > 0 && ball.body.velocity.x < 0) {
-//         ball.setVelocityY(-ballSpeedY);
-//     } else if (normalizedRelativeIntersectionX > 0 && ball.body.velocity.x > 0) {
-//         ball.setVelocity(-ball.body.velocity.x, -ballSpeedY);
-//     } else if (normalizedRelativeIntersectionX < 0 && ball.body.velocity.x < 0) {
-//         ball.setVelocity(-ball.body.velocity.x, -ballSpeedY);
-//     } else if (normalizedRelativeIntersectionX < 0 && ball.body.velocity.x > 0) {
-//         ball.setVelocityY(-ballSpeedY);
-//     }
-// }
-
-// function createBars() {
-//     for (let j = 300; j >= 200; j -= 20) {
-//         for (let i = 75; i <= 725; i += 50) {
-//             if (j == 300) {
-//                 blueBar.create(i, j, 'blue-bar');
-//             } else if (j == 280) {
-//                 greenBar.create(i, j, 'green-bar');
-//             } else if (j == 260) {
-//                 yellowBar.create(i, j, 'yellow-bar');
-//             } else if (j == 240) {
-//                 orangeBar.create(i, j, 'orange-bar');
-//             } else if (j == 220) {
-//                 brownBar.create(i, j, 'brown-bar');
-//             } else if (j == 200) {
-//                 redBar.create(i, j, 'red-bar');
-//             }
-//         }
-//     }
-// }
+function dropTetrimino(piece) {
+    piece.y += 30;
+}
 
 </script>
 
