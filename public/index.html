@@ -42,6 +42,7 @@ let o;
 let timedEvent;
 let tetriminoSpeed;
 let cursors;
+let walls;
 let game = new Phaser.Game(config);
 
 function preload() {
@@ -54,12 +55,17 @@ function preload() {
 function create() {
     // Background image
     this.add.image(450, 300, 'background');
-    this.add.image(300, 300, 'separator');
-    this.add.image(600, 300, 'separator');
+
+    // Create vertical walls with collision detection
+    walls = this.physics.add.staticGroup();
+    walls.create(300, 300, 'separator');
+    walls.create(600, 300, 'separator');
+
 
     // Tetriminos
     o = this.physics.add.image(450, 300, 'o_piece');
     o.setCollideWorldBounds(true);
+    o.setImmovable(true);
 
     // Keyboard inputs
     cursors = this.input.keyboard.createCursorKeys();
@@ -78,6 +84,10 @@ function create() {
         fontSize: '22px',
         fill: '#ffffff'
     });
+
+    // Collision detection
+    //this.physics.add.collider(o, walls);
+    this.physics.add.overlap(o, walls, wallOverlap, null, this);
 }
 
 function update() {
@@ -94,6 +104,14 @@ function update() {
 
 function dropTetrimino(piece) {
     piece.y += 30;
+}
+
+function wallOverlap(o, walls) {
+    if (o.body.position.x <= 300) {
+        o.body.position.x = 300;
+    } else {
+        o.body.position.x = 540;
+    }
 }
 
 </script>
