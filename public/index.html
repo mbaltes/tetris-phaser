@@ -40,6 +40,7 @@ let config = {
 
 let o;
 let timedEvent;
+let tetriminoSpeed;
 let game = new Phaser.Game(config);
 
 function preload() {
@@ -71,9 +72,15 @@ function create() {
         loop: true
     });
 
+    // Debug information
+    tetriminoSpeed = this.add.text(100, 100, 'tVelY', {
+        fontSize: '22px',
+        fill: '#ffffff'
+    });
 }
 
 function update() {
+    tetriminoSpeed.setText('Y velocity: ' + o.body.velocity.y);
 }
 
 function dropTetrimino(piece) {
