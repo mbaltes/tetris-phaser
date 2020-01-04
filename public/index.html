@@ -4,7 +4,7 @@
     <link href="https://fonts.googleapis.com/css?family=Electrolize&display=swap" rel="stylesheet">
     <meta charset="UTF-8" />
     <title>Tetris</title>
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.21.0/dist/phaser.js"></script>
     <style type="text/css">
         body {
             margin-left: 50px;
@@ -25,7 +25,7 @@ let config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            debug: true
+            debug: false
         }
     },
     scene: {
@@ -41,6 +41,10 @@ let config = {
 let o;
 let timedEvent;
 let tetriminoSpeed;
+let xPosition;
+let yPosition;
+let leftKey;
+let rightKey;
 let cursors;
 let walls;
 let game = new Phaser.Game(config);
@@ -63,9 +67,10 @@ function create() {
 
 
     // Tetriminos
-    o = this.physics.add.image(450, 300, 'o_piece');
+    o = this.physics.add.image(450, 30, 'o_piece');
     o.setCollideWorldBounds(true);
-    o.setImmovable(true);
+    //o.setImmovable(true);
+    //o.body.setBoundsRectangle(new Phaser.Geom.Rectangle(300, 0, 300, 800));
 
     // Keyboard inputs
     cursors = this.input.keyboard.createCursorKeys();
@@ -85,20 +90,44 @@ function create() {
         fill: '#ffffff'
     });
 
+    xPosition = this.add.text(100, 150, 'x_pos', {
+        fontSize: '22px',
+        fill: '#ffffff'
+    });
+
+    yPosition = this.add.text(100, 200, 'y_pos', {
+        fontSize: '22px',
+        fill: '#ffffff'
+    });
+
+    // Trying using JustDown for movement
+    leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+    rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+
     // Collision detection
     //this.physics.add.collider(o, walls);
     this.physics.add.overlap(o, walls, wallOverlap, null, this);
+    // this.add.graphics()
+    //     .lineStyle(5, 0x00fff, 0.5)
+    //     .strokeRectShape(o.body.customBoundsRectangle);
 }
 
 function update() {
     // Display debug text
     tetriminoSpeed.setText('Y velocity: ' + o.body.velocity.y);
+    xPosition.setText('X position: ' + o.body.position.x);
+    yPosition.setText('Y position: ' + o.body.position.y);
 
     // Control tetrimino movement
-    if (cursors.left.isDown) {
-        o.x -= 5;
-    } else if (cursors.right.isDown) {
-        o.x += 5;
+    // if (cursors.left.isDown) {
+    //     o.x -= 30;
+    // } else if (cursors.right.isDown) {
+    //     o.x += 30;
+    // }
+    if (Phaser.Input.Keyboard.JustDown(leftKey)) {
+        o.x -= 30;
+    } else if (Phaser.Input.Keyboard.JustDown(rightKey)) {
+        o.x += 30;
     }
 }
 
